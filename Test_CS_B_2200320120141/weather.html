@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            width: 100%;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .weather-info {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Weather Report</h2>
+        <div class="input-group">
+            <label for="city">Enter City</label>
+            <input type="text" id="city" name="city" required>
+        </div>
+        <button class="btn" onclick="getWeather()">Get Weather</button>
+
+        <div id="weather-info" class="weather-info"></div>
+        <div id="error" class="error"></div>
+    </div>
+
+    <script>
+        // API Key for OpenWeatherMap
+        const apiKey = "8a6e0b1ee83da1d0e73b06a7bf4809d6";
+        const apiUrl = "https://api.openweathermap.org/data/2.5/weather";
+
+        async function getWeather() {
+            const city = document.getElementById("city").value.trim();
+            const weatherInfoElement = document.getElementById("weather-info");
+            const errorElement = document.getElementById("error");
+
+            // Reset previous error message and weather data
+            errorElement.innerHTML = "";
+            weatherInfoElement.innerHTML = "";
+
+            // Check if the city input is not empty
+            if (!city) {
+                errorElement.innerHTML = "Please enter a city.";
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiUrl}?q=${city}&appid=${apiKey}&units=metric`);
+                
+                // Check if the response is ok (status 200)
+                if (!response.ok) {
+                    throw new Error("City not found");
+                }
+
+                // Parse the JSON response
+                const data = await response.json();
+                
+                // Extract weather information
+                const temperature = data.main.temp;
+                const description = data.weather[0].description;
+
+                // Display the weather info
+                weatherInfoElement.innerHTML = `
+                    <h3>Weather in ${city}</h3>
+                    <p>Temperature: ${temperature}°C</p>
+                    <p>Description: ${description}</p>
+                `;
+            } catch (error) {
+                // Show error message if the city is not found or there's any other issue
+                errorElement.innerHTML = `Error: ${error.message}. Please try again.`;
+            }
+        }
+    </script>
+
+</body>
+</html>
