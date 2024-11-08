@@ -95,7 +95,6 @@
     </div>
 
     <script>
-        // API Key for OpenWeatherMap
         const apiKey = "8a6e0b1ee83da1d0e73b06a7bf4809d6";
         const apiUrl = "https://api.openweathermap.org/data/2.5/weather";
 
@@ -103,12 +102,8 @@
             const city = document.getElementById("city").value.trim();
             const weatherInfoElement = document.getElementById("weather-info");
             const errorElement = document.getElementById("error");
-
-            // Reset previous error message and weather data
             errorElement.innerHTML = "";
             weatherInfoElement.innerHTML = "";
-
-            // Check if the city input is not empty
             if (!city) {
                 errorElement.innerHTML = "Please enter a city.";
                 return;
@@ -116,27 +111,18 @@
 
             try {
                 const response = await fetch(`${apiUrl}?q=${city}&appid=${apiKey}&units=metric`);
-                
-                // Check if the response is ok (status 200)
                 if (!response.ok) {
                     throw new Error("City not found");
                 }
-
-                // Parse the JSON response
                 const data = await response.json();
-                
-                // Extract weather information
                 const temperature = data.main.temp;
                 const description = data.weather[0].description;
-
-                // Display the weather info
                 weatherInfoElement.innerHTML = `
                     <h3>Weather in ${city}</h3>
                     <p>Temperature: ${temperature}°C</p>
                     <p>Description: ${description}</p>
                 `;
             } catch (error) {
-                // Show error message if the city is not found or there's any other issue
                 errorElement.innerHTML = `Error: ${error.message}. Please try again.`;
             }
         }
